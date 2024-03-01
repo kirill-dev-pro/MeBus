@@ -1,0 +1,34 @@
+{
+  "name": "mebus",
+  "author": {
+    "name": "Kirill Chuprov",
+    "email": "kirill@kcrz.dev",
+    "url": "https://kcrz.dev"
+  },
+  "version": "1.0.0",
+  "description": "Type safe event bus for browser",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "@TODO"
+  },
+  "keywords": [
+    "event",
+    "bus",
+    "emitter",
+    "listener",
+    "browser",
+    "typescript",
+    "zod",
+    "microfrontend",
+    "microfrontends",
+    "micro-frontend",
+    "micro-frontends"
+  ],
+  "main": "index.ts",
+  "module": "index.ts",
+  "type": "module",
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}
