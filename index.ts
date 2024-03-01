@@ -2,8 +2,8 @@ import z from "zod";
 
 export type EventSchema = Record<string, z.Schema>;
 
-const isCustomEvent = (e: Event): e is CustomEvent => {
-  return e instanceof CustomEvent;
+const isCustomEvent = (event: Event): event is CustomEvent => {
+  return event instanceof CustomEvent;
 };
 
 /**
@@ -23,7 +23,7 @@ const isCustomEvent = (e: Event): e is CustomEvent => {
  * bus.subscribe("event1", (payload) => console.log(payload));
  * bus.publish("event2", { id: 1 });
  */
-export class MeBus<T extends EventSchema, K extends keyof T & string> {
+export class MeBus<T extends EventSchema> {
   private eventSchema: T;
 
   constructor(eventSchema: T) {
@@ -39,7 +39,7 @@ export class MeBus<T extends EventSchema, K extends keyof T & string> {
    * @param listener - The listener function to be called when the event is triggered. It receives the payload of the event as a parameter.
    * @returns A function that can be called to unsubscribe from the event.
    */
-  public subscribe(type: K, listener: (payload: z.infer<T[K]>) => void) {
+  public subscribe<K extends keyof T & string>(type: K, listener: (payload: z.infer<T[K]>) => void) {
     const schema = this.eventSchema[type];
     if (!schema) {
       throw new Error(`[MeBus] No schema found for event: ${type}`);
@@ -74,7 +74,7 @@ export class MeBus<T extends EventSchema, K extends keyof T & string> {
    * @returns void
    * @throws Error if no schema is found for the event or if the payload fails validation.
    */
-  public publish(type: K, payload: z.infer<T[K]>): void {
+  public publish<K extends keyof T & string>(type: K, payload: z.infer<T[K]>): void {
     const schema = this.eventSchema[type];
     if (!schema) {
       throw new Error(`[MeBus] No schema found for event: ${type}`);

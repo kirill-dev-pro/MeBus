@@ -5,12 +5,15 @@
     "email": "kirill@kcrz.dev",
     "url": "https://kcrz.dev"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Type safe event bus for browser",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "@TODO"
+    "url": "https://github.com/kirill-dev-pro/MeBus/tree/master"
+  },
+  "issues": {
+    "url": "https://github.com/kirill-dev-pro/MeBus/issues"
   },
   "keywords": [
     "event",
