@@ -1,11 +1,10 @@
 # .github/workflows/publish.yml
 
-name: Publish
+name: Publish Package to JSR
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   publish:
