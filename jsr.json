@@ -1,0 +1,5 @@
+{
+  "name": "@mebus/mebus",
+  "version": "1.0.2",
+  "exports": "./index.ts"
+}

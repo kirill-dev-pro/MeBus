@@ -1,7 +1,25 @@
+/**
+ * @module
+ * MeBus is a type safe and end-to-end runtime validated message bus for the browser.
+ */
+
 import z from "zod";
 
+/**
+ * EventSchema is a record of event types and their corresponding payload schemas.
+ * @example
+ * const MyEventSchema: EventSchema = {
+ *   event1: z.object({  payload: z.string(), }),
+ *   event2: z.object({  id: z.number(), }),
+ * };
+ */
 export type EventSchema = Record<string, z.Schema>;
 
+/**
+ * Type guard for CustomEvent.
+ * @param event - The event to check.
+ * @returns true if the event is a CustomEvent, false otherwise.
+ */
 const isCustomEvent = (event: Event): event is CustomEvent => {
   return event instanceof CustomEvent;
 };
@@ -26,6 +44,11 @@ const isCustomEvent = (event: Event): event is CustomEvent => {
 export class MeBus<T extends EventSchema> {
   private eventSchema: T;
 
+  /**
+   * Creates a new instance of MeBus.
+   * @param eventSchema - Schema with definitions for all the event types and their payloads.
+   * @throws Error if MeBus is not used in the browser.
+   */
   constructor(eventSchema: T) {
     if (typeof window === "undefined") {
       throw new Error("[MeBus] MeBus is only available in the browser");
@@ -34,12 +57,15 @@ export class MeBus<T extends EventSchema> {
   }
 
   /**
-   * Subscribes to a specific event type and registers a listener function to be called when the event is triggered.
+   * Subscribes to a specific event type and registers a listener function to be called when the event is triggered. Returns cleanup.
    * @param type - The event type to subscribe to.
    * @param listener - The listener function to be called when the event is triggered. It receives the payload of the event as a parameter.
    * @returns A function that can be called to unsubscribe from the event.
    */
-  public subscribe<K extends keyof T & string>(type: K, listener: (payload: z.infer<T[K]>) => void) {
+  public subscribe<K extends keyof T & string>(
+    type: K,
+    listener: (payload: z.infer<T[K]>) => void
+  ): () => void {
     const schema = this.eventSchema[type];
     if (!schema) {
       throw new Error(`[MeBus] No schema found for event: ${type}`);
@@ -74,7 +100,10 @@ export class MeBus<T extends EventSchema> {
    * @returns void
    * @throws Error if no schema is found for the event or if the payload fails validation.
    */
-  public publish<K extends keyof T & string>(type: K, payload: z.infer<T[K]>): void {
+  public publish<K extends keyof T & string>(
+    type: K,
+    payload: z.infer<T[K]>
+  ): void {
     const schema = this.eventSchema[type];
     if (!schema) {
       throw new Error(`[MeBus] No schema found for event: ${type}`);
