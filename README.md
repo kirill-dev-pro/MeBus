@@ -1,6 +1,6 @@
 # MeBus
 
-MeBus is a type safe, runtime validated, event bus. It is a wrapper around native browser event system, and it uses Zod. 
+MeBus is a type safe, runtime validated, event bus. It is a wrapper around native browser event system, and it uses `io-ts`. 
 
 ## Use cases
 
@@ -15,7 +15,7 @@ MeBus is a type safe, runtime validated, event bus. It is a wrapper around nativ
 
 ## Installation
 
-You can install Mebus using npm:
+You can install MeBus using npm:
 
 ```bash
 npm i mebus
@@ -25,40 +25,36 @@ npm i mebus
 
 ```javascript
 import { MeBus } from 'mebus';
-import z from "zod";
+import * as t from 'io-ts'
 
-const MyEventSchema = {
-  event1: z.object({
-    payload: z.string(),
+const myEventSchema = {
+  event1: t.type({
+    data: t.string
   }),
-  event2: z.object({
-    id: z.number(),
+  event2: t.type({
+    id: t.number
   }),
-  ["namespace::event3"]: z.object({
-    foo: z.boolean(),
+  ["namespace::event3"]: t.type({
+    foo: t.boolean
   }),
-  // add more events as needed
-};
+}
+
 
 const bus = new MeBus(MyEventSchema);
 
-const handler = (payload) => {
-  console.log("event1 received", payload);
-};
+bus.subscribe("event1", ({ data }) => {
+  console.log("event1 received", data);
+});
 
-bus.subscribe("event1", handler);
-
-bus.publish("event1", { payload: "Hello, world!" });
-
-bus.unsubscribe("event1", handler);
+bus.publish("event2", { id: "Hello, world!" });
 ```
 
 ## API
 
-* `constructor(eventSchema: Record<string, z.Schema)`
+* `constructor(eventSchema: Record<string, TypeC)`
   Creates a new instance of MeBus.
 
-    - `eventSchema`: An object that defines the schema for the events. The keys are the event names and the values are the Zod schemas for the event payloads.
+    - `eventSchema`: An object that defines the schema for the events. The keys are the event names and the values are the io-ts schemas for the event payloads.
 
 * `subscribe(eventName: string, handler: (payload: any) => void): void`
 

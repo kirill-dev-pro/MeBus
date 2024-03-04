@@ -3,7 +3,8 @@
  * MeBus is a type safe and end-to-end runtime validated message bus for the browser.
  */
 
-import z from "zod";
+import type { TypeC, TypeOf } from 'io-ts'
+import { isLeft } from 'fp-ts/Either';
 
 /**
  * EventSchema is a record of event types and their corresponding payload schemas.
@@ -13,7 +14,7 @@ import z from "zod";
  *   event2: z.object({  id: z.number(), }),
  * };
  */
-export type EventSchema = Record<string, z.Schema>;
+export type EventSchema = Record<string, TypeC<any>>;
 
 /**
  * Type guard for CustomEvent.
@@ -64,7 +65,7 @@ export class MeBus<T extends EventSchema> {
    */
   public subscribe<K extends keyof T & string>(
     type: K,
-    listener: (payload: z.infer<T[K]>) => void
+    listener: (payload: TypeOf<T[K]>) => void
   ): () => void {
     const schema = this.eventSchema[type];
     if (!schema) {
@@ -78,13 +79,13 @@ export class MeBus<T extends EventSchema> {
       (e) => {
         if (!isCustomEvent(e)) return;
         const payload = e.detail;
-        const validation = schema.safeParse(payload);
-        if (!validation.success) {
+        const validation = schema.decode(payload);
+        if (isLeft(validation)) {
           throw new Error(
-            validation.error.errors.map((e) => e.message).join("\n")
+            validation.left.map((error) => error.message || '').join("\n")
           );
         }
-        listener(validation.data);
+        listener(validation.right);
       },
       { signal: abortController.signal }
     );
@@ -102,15 +103,17 @@ export class MeBus<T extends EventSchema> {
    */
   public publish<K extends keyof T & string>(
     type: K,
-    payload: z.infer<T[K]>
+    payload: TypeOf<T[K]>
   ): void {
     const schema = this.eventSchema[type];
     if (!schema) {
       throw new Error(`[MeBus] No schema found for event: ${type}`);
     }
-    const validation = schema.safeParse(payload);
-    if (!validation.success) {
-      throw new Error(validation.error.errors.map((e) => e.message).join("\n"));
+    const validation = schema.decode(payload);
+    if (isLeft(validation)) {
+      throw new Error(
+        validation.left.map((error) => error.message || '').join("\n")
+      );
     }
     window.dispatchEvent(new CustomEvent(type, { detail: payload }));
   }
