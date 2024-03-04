@@ -5,8 +5,8 @@
     "email": "kirill@kcrz.dev",
     "url": "https://kcrz.dev"
   },
-  "version": "1.0.4",
-  "description": "Type safe event bus for browser",
+  "version": "1.0.5",
+  "description": "Type-safe event bus for browser",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,11 +28,7 @@
     "micro-frontend",
     "micro-frontends"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
+  "main": "index.ts",
   "module": "index.ts",
   "type": "module",
   "dependencies": {
