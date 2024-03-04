@@ -3,18 +3,18 @@
  * MeBus is a type safe and end-to-end runtime validated message bus for the browser.
  */
 
-import type { TypeC, TypeOf } from 'io-ts'
+import type { Any, TypeOf } from 'io-ts'
 import { isLeft } from 'fp-ts/Either';
 
 /**
  * EventSchema is a record of event types and their corresponding payload schemas.
  * @example
  * const MyEventSchema: EventSchema = {
- *   event1: z.object({  payload: z.string(), }),
- *   event2: z.object({  id: z.number(), }),
+ *   event1: t.type({  payload: t.string }),
+ *   event2: t.type({  id: t.number }),
  * };
  */
-export type EventSchema = Record<string, TypeC<any>>;
+export type EventSchema = Record<string, Any>;
 
 /**
  * Type guard for CustomEvent.
@@ -30,11 +30,11 @@ const isCustomEvent = (event: Event): event is CustomEvent => {
  * @param {EventSchema} eventSchema - Schema with definitions for all the event types and their payloads.
  *
  * @example
- * import z from "zod";
+ * import * as t from "io-ts";
  *
  * const MyEventSchema = {
- *  event1: z.object({  payload: z.string(), }),
- *  event2: z.object({  id: z.number(), }),
+ *   event1: t.type({  payload: t.string }),
+ *   event2: t.type({  id: t.number }),
  * };
  *
  * const bus = new MessageBus(MyEventSchema);
